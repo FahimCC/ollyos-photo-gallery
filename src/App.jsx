@@ -1,61 +1,72 @@
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import img1 from "./assets/images/image-1.webp";
+import img2 from "./assets/images/image-2.webp";
+import img3 from "./assets/images/image-3.webp";
+import img4 from "./assets/images/image-4.webp";
+import img5 from "./assets/images/image-5.webp";
+import img6 from "./assets/images/image-6.webp";
+import img7 from "./assets/images/image-7.webp";
+import img8 from "./assets/images/image-8.webp";
+import img9 from "./assets/images/image-9.webp";
+import img10 from "./assets/images/image-10.jpeg";
+import img11 from "./assets/images/image-11.jpeg";
 
 const App = () => {
   const galleryPhotos = [
     {
       id: "1",
-      image: "../src/assets/images/image-1.webp",
+      image: img1,
       order: 1,
     },
     {
       id: "2",
-      image: "../src/assets/images/image-2.webp",
+      image: img2,
       order: 2,
     },
     {
       id: "3",
-      image: "../src/assets/images/image-3.webp",
+      image: img3,
       order: 3,
     },
     {
       id: "4",
-      image: "../src/assets/images/image-4.webp",
+      image: img4,
       order: 4,
     },
     {
       id: "5",
-      image: "../src/assets/images/image-5.webp",
+      image: img5,
       order: 5,
     },
     {
       id: "6",
-      image: "../src/assets/images/image-6.webp",
+      image: img6,
       order: 6,
     },
     {
       id: "7",
-      image: "../src/assets/images/image-7.webp",
+      image: img7,
       order: 7,
     },
     {
       id: "8",
-      image: "../src/assets/images/image-8.webp",
+      image: img8,
       order: 8,
     },
     {
       id: "9",
-      image: "../src/assets/images/image-9.webp",
+      image: img9,
       order: 9,
     },
     {
       id: "10",
-      image: "../src/assets/images/image-10.jpeg",
+      image: img10,
       order: 10,
     },
     {
       id: "11",
-      image: "../src/assets/images/image-11.jpeg",
+      image: img11,
       order: 11,
     },
   ];
@@ -96,13 +107,12 @@ const App = () => {
       const storeDestinationIndex = destination.index;
       const [removedStore] = reorderedStores.splice(storeSourceIndex, 1);
       reorderedStores.splice(storeDestinationIndex, 0, removedStore);
-      let reorderedPhotos;
-      (reorderedPhotos = await Promise.all(
+      const reorderedPhotos = await Promise.all(
         reorderedStores.map((photo, index) => {
           return { ...photo, Order: index };
         })
-      )),
-        setPhotos(reorderedPhotos);
+      );
+      setPhotos(reorderedPhotos);
       console.log("reorderedPhotos::: ", await reorderedPhotos);
     }
   };
