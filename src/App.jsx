@@ -179,7 +179,7 @@ const App = () => {
           <hr />
 
           {/* grid layout for gallery */}
-          <div className="p-4 md:p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
+          <div className="smooth p-4 md:p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
             {photos?.map((photo, index) => (
               <div
                 draggable="true"
@@ -188,7 +188,7 @@ const App = () => {
                 onDragEnd={handleDragEnd}
                 onDragOver={(e) => e.preventDefault()}
                 key={index}
-                className={`${index === 0 && "col-span-2 row-span-2"}`}
+                className={`smooth ${index === 0 && "col-span-2 row-span-2"}`}
                 style={{ aspectRatio: "1/1" }}
               >
                 <label htmlFor={photo.id} className="relative">
@@ -210,7 +210,7 @@ const App = () => {
                     type="checkbox"
                     name="gender"
                     id={photo.id}
-                    value={photo.id}
+                    checked={selectedPhotos?.includes(photo.id)}
                     className={` ${
                       selectedPhotos?.includes(photo.id)
                         ? "block"

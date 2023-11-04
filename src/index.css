@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.dragged {
+  opacity: 0.4; /* Change opacity to indicate drag */
+  background-color: #f9f9f9; /* Add a background color to indicate empty space */
+  /* Add other styling for the dragged item as needed */
+}
+
 .squeeze {
   transform: scale(1);
   transition: transform 0.2s;
@@ -16,7 +22,7 @@
 }
 
 .smooth {
-  @apply transition-all duration-500 ease-in-out;
+  @apply transition-all duration-1000 ease-in-out;
 }
 
 .card-shadow {
