@@ -60,7 +60,10 @@ const App = () => {
   ];
 
   const [selectedPhotos, setSelectedPhotos] = useState([]);
-  let [photos, setPhotos] = useState(galleryPhotos);
+  const [photos, setPhotos] = useState(galleryPhotos);
+
+  let [reOrderedPhotos, setReOrderedPhotos] = useState([]);
+  const [isDragEnd, setIsDragEnd] = useState(true);
 
   //!  handle selected and unselected photo/photos
   const handleSelectedPhotos = (id) => {
@@ -89,43 +92,49 @@ const App = () => {
     setSelectedPhotos([]);
   };
 
-  const dragItem = useRef(null);
-  const dragOverItem = useRef(null);
+  const source = useRef(null);
+  const destination = useRef(null);
 
   //! to check source
   const handleDragStart = (e, index) => {
-    e.target.style.opacity = "0.4";
-    dragItem.current = index;
-    console.log("drag start - ", index);
+    source.current = index;
   };
 
   //! to check destination
   const handleDragEnter = (e, index) => {
-    dragOverItem.current = index;
-    console.log("drag Enter - ", index);
+    destination.current = index;
+    console.log("source - destination : ", source, destination);
+
+    let reOrder = [...photos];
+
+    //*  remove and save the dragged item content
+    const sourceContent = reOrder.splice(source.current, 1)[0];
+
+    //*  switch the position
+    reOrder.splice(destination.current, 0, sourceContent);
+
+    setReOrderedPhotos([...reOrder]);
+    setIsDragEnd(false);
   };
 
   //! handle drag sorting
-  const handleDragEnd = (e) => {
-    e.target.style.opacity = "1";
-    let reOrderedPhotos = [...photos];
+  const handleDragEnd = () => {
+    if (source.current !== destination.current) {
+      //*  update the actual array
+      setPhotos([...reOrderedPhotos]);
+    }
+    setIsDragEnd(true);
 
-    //*  remove and save the dragged item content
-    const draggedItemContent = reOrderedPhotos.splice(dragItem.current, 1)[0];
-
-    //*  switch the position
-    reOrderedPhotos.splice(dragOverItem.current, 0, draggedItemContent);
+    // console.log(reOrderedPhotos);
 
     //*  reset the position ref
-    dragItem.current = null;
-    dragOverItem.current = null;
-
-    //*  update the actual array
-    setPhotos(reOrderedPhotos);
+    source.current = null;
+    destination.current = null;
   };
 
   //! added multiple photos
   const handleAddPhoto = (e) => {
+    setIsLoading(true);
     const addPhotos = e.target.files;
 
     const newPhotos = Array.from(addPhotos).map((file, index) => {
@@ -136,7 +145,8 @@ const App = () => {
     });
 
     //* Update the state with the new photos
-    setPhotos([...photos, ...newPhotos]);
+    setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]);
+    setIsLoading(false);
   };
 
   return (
@@ -172,15 +182,15 @@ const App = () => {
               {selectedPhotos?.length === 0
                 ? ""
                 : selectedPhotos?.length === 1
-                ? "Deleted file"
-                : "Deleted files"}{" "}
+                ? "Delete file"
+                : "Delete files"}{" "}
             </div>
           </div>
           <hr />
 
           {/* grid layout for gallery */}
-          <div className="smooth p-4 md:p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
-            {photos?.map((photo, index) => (
+          <div className=" smooth p-4 md:p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
+            {(isDragEnd ? photos : reOrderedPhotos)?.map((photo, index) => (
               <div
                 draggable="true"
                 onDragStart={(e) => handleDragStart(e, index)}
@@ -188,42 +198,47 @@ const App = () => {
                 onDragEnd={handleDragEnd}
                 onDragOver={(e) => e.preventDefault()}
                 key={index}
-                className={`smooth ${index === 0 && "col-span-2 row-span-2"}`}
-                style={{ aspectRatio: "1/1" }}
+                className={`rounded-lg smooth aspect-square ${
+                  index === 0 && "col-span-2 row-span-2"
+                }`}
               >
                 <label htmlFor={photo.id} className="relative">
                   <div
-                    className={` w-full h-full  smooth rounded-lg  ${
+                    className={`w-full h-full smooth rounded-lg ${
                       selectedPhotos?.includes(photo?.id)
                         ? "opacity-50"
                         : "hover:bg-zinc-500"
                     }`}
                   >
-                    <img
+                    <div
+                      className="bg-blend-overlay h-full w-full rounded-lg  bg-cover border-2 border-[#c9cbcf] mix-blend-multiply"
+                      style={{
+                        backgroundImage: `url('${photo.image}')`,
+                      }}
+                    ></div>
+                    {/* <img
                       className="h-full w-full  rounded-lg object-cover border-2 border-[#c9cbcf] mix-blend-multiply"
                       src={photo.image}
                       alt={`image-${index}`}
-                    />
+                    /> */}
                   </div>
-                  {/* hidden checkbox for all photos */}
                   <input
                     type="checkbox"
                     name="gender"
                     id={photo.id}
                     checked={selectedPhotos?.includes(photo.id)}
-                    className={` ${
+                    className={`${
                       selectedPhotos?.includes(photo.id)
                         ? "block"
-                        : "hover:block hidden"
-                    }   lg:mr-8 w-[14px] h-[14px] lg:w-[18px] lg:h-[18px] cursor-pointer accent-primary absolute top-[14px] left-[14px]  md:top-[18px] md:left-[18px]`}
+                        : "hover:block hidden active:hidden"
+                    } lg:mr-8 w-[14px] h-[14px] lg:w-[18px] lg:h-[18px] cursor-pointer accent-primary absolute top-[14px] left-[14px]  md:top-[18px] md:left-[18px]`}
                     onChange={() => handleSelectedPhotos(photo.id)}
                   />
                 </label>
               </div>
             ))}
-
             {/* add image button */}
-            <div className="cursor-pointer smooth rounded-lg border-2 border-[#c9cbcf] border-dashed bg-[#f9f9f9] py-8">
+            <div className="aspect-square  cursor-pointer smooth rounded-lg border-2 border-[#c9cbcf] border-dashed bg-[#f9f9f9]">
               <label className="squeeze smooth flex flex-col items-center justify-center gap-1 lg:gap-4 h-full">
                 <svg
                   stroke="currentColor"
