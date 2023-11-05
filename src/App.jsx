@@ -91,6 +91,7 @@ const App = () => {
     //  * set the selected photos empty
     setSelectedPhotos([]);
   };
+  
 
   const source = useRef(null);
   const destination = useRef(null);
@@ -134,7 +135,6 @@ const App = () => {
 
   //! added multiple photos
   const handleAddPhoto = (e) => {
-    setIsLoading(true);
     const addPhotos = e.target.files;
 
     const newPhotos = Array.from(addPhotos).map((file, index) => {
@@ -146,7 +146,6 @@ const App = () => {
 
     //* Update the state with the new photos
     setPhotos((prevPhotos) => [...prevPhotos, ...newPhotos]);
-    setIsLoading(false);
   };
 
   return (
@@ -159,7 +158,7 @@ const App = () => {
                 <input
                   readOnly
                   type="checkbox"
-                  checked={selectedPhotos.length ? true : false}
+                  checked={selectedPhotos?.length ? true : false}
                   className=" w-[14px] h-[14px] lg:w-[18px] lg:h-[18px]"
                   onChange={() => setSelectedPhotos([])}
                 />
@@ -202,7 +201,7 @@ const App = () => {
                   index === 0 && "col-span-2 row-span-2"
                 }`}
               >
-                <label htmlFor={photo.id} className="relative">
+                <label htmlFor={photo?.id} className="relative">
                   <div
                     className={`w-full h-full smooth rounded-lg ${
                       selectedPhotos?.includes(photo?.id)
@@ -213,7 +212,7 @@ const App = () => {
                     <div
                       className="bg-blend-overlay h-full w-full rounded-lg  bg-cover border-2 border-[#c9cbcf] mix-blend-multiply"
                       style={{
-                        backgroundImage: `url('${photo.image}')`,
+                        backgroundImage: `url('${photo?.image}')`,
                       }}
                     ></div>
                     {/* <img
@@ -225,14 +224,14 @@ const App = () => {
                   <input
                     type="checkbox"
                     name="gender"
-                    id={photo.id}
-                    checked={selectedPhotos?.includes(photo.id)}
+                    id={photo?.id}
+                    checked={selectedPhotos?.includes(photo?.id)}
                     className={`${
-                      selectedPhotos?.includes(photo.id)
+                      selectedPhotos?.includes(photo?.id)
                         ? "block"
                         : "hover:block hidden active:hidden"
                     } lg:mr-8 w-[14px] h-[14px] lg:w-[18px] lg:h-[18px] cursor-pointer accent-primary absolute top-[14px] left-[14px]  md:top-[18px] md:left-[18px]`}
-                    onChange={() => handleSelectedPhotos(photo.id)}
+                    onChange={() => handleSelectedPhotos(photo?.id)}
                   />
                 </label>
               </div>
