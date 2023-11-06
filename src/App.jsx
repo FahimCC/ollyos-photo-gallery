@@ -10,6 +10,8 @@ import img8 from "./assets/images/image-8.webp";
 import img9 from "./assets/images/image-9.webp";
 import img10 from "./assets/images/image-10.webp";
 import img11 from "./assets/images/image-11.webp";
+import Header from "./components/Header";
+import AddImages from "./components/AddImages";
 
 const App = () => {
   const galleryPhotos = [
@@ -91,7 +93,6 @@ const App = () => {
     //  * set the selected photos empty
     setSelectedPhotos([]);
   };
-  
 
   const source = useRef(null);
   const destination = useRef(null);
@@ -152,50 +153,25 @@ const App = () => {
     <div className="bg-slate-100 h-full font-openSans">
       <div className="container py-10 ">
         <div className="bg-white rounded-lg border">
-          <div className="flex justify-between items-center mx-4 md:mx-10 my-4">
-            <div className="flex gap-2 items-center ">
-              {selectedPhotos?.length > 0 && (
-                <input
-                  readOnly
-                  type="checkbox"
-                  checked={selectedPhotos?.length ? true : false}
-                  className=" w-[14px] h-[14px] lg:w-[18px] lg:h-[18px]"
-                  onChange={() => setSelectedPhotos([])}
-                />
-              )}
-              <p className="font-bold lg:text-xl">
-                {/* toggle the Gallery / File / Files */}
-                {selectedPhotos?.length > 0 && selectedPhotos?.length}{" "}
-                {selectedPhotos?.length === 0
-                  ? "Gallery"
-                  : selectedPhotos?.length === 1
-                  ? "File Selected"
-                  : "Files Selected"}{" "}
-              </p>
-            </div>
-            <div
-              onClick={handleDeletedPhotos}
-              className="cursor-pointer squeeze font-semibold text-sm lg:text-base text-red-500 "
-            >
-              {/* toggle the file / files when at least one photo selected*/}
-              {selectedPhotos?.length === 0
-                ? ""
-                : selectedPhotos?.length === 1
-                ? "Delete file"
-                : "Delete files"}{" "}
-            </div>
-          </div>
-          <hr />
+          {/* Header components */}
+          <Header
+            handleDeletedPhotos={handleDeletedPhotos}
+            selectedPhotos={selectedPhotos}
+            setSelectedPhotos={setSelectedPhotos}
+          />
 
           {/* grid layout for gallery */}
-          <div className=" smooth p-4 md:p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            className=" smooth p-4 md:p-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6"
+          >
             {(isDragEnd ? photos : reOrderedPhotos)?.map((photo, index) => (
               <div
                 draggable="true"
+                onTouchStart={(e) => handleDragStart(e, index)}
                 onDragStart={(e) => handleDragStart(e, index)}
                 onDragEnter={(e) => handleDragEnter(e, index)}
                 onDragEnd={handleDragEnd}
-                onDragOver={(e) => e.preventDefault()}
                 key={index}
                 className={`rounded-lg smooth aspect-square ${
                   index === 0 && "col-span-2 row-span-2"
@@ -237,32 +213,7 @@ const App = () => {
               </div>
             ))}
             {/* add image button */}
-            <div className="aspect-square  cursor-pointer smooth rounded-lg border-2 border-[#c9cbcf] border-dashed bg-[#f9f9f9]">
-              <label className="squeeze smooth flex flex-col items-center justify-center gap-1 lg:gap-4 h-full">
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 16 16"
-                  height="1.5em"
-                  width="1.5em"
-                  xmlns="http:www.w3.org/2000/svg"
-                >
-                  <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
-                  <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"></path>
-                </svg>
-                <p className="font-semibold text-center text-sm  md:text-base">
-                  Add Images
-                </p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="absolute top-0 left-0 h-full w-full opacity-0 cursor-pointer"
-                  onChange={handleAddPhoto}
-                />
-              </label>
-            </div>
+            <AddImages handleAddPhoto={handleAddPhoto} />
           </div>
         </div>
       </div>

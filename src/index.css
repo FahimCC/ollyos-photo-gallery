@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.draggable {
+  touch-action: none !important;
+}
+
 .squeeze {
   transform: scale(1);
   transition: transform 0.2s;
